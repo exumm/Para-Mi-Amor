@@ -3,17 +3,18 @@ const container = document.getElementById("countdown-container");
 const countdown = document.getElementById("countdown");
 const timerText = document.getElementById("timerText");
 const tracks = document.querySelectorAll(".track");
+const questionScreen = document.getElementById("questionScreen");
+const scrollArrow = document.getElementById("scrollArrow");
 
-// Fecha final
 const targetDate = new Date("February 14, 2026 22:00:00").getTime();
 
-// INTRO → CONTADOR
+// INTRO -> HABILITAR SCROLL AL TERMINAR
 setTimeout(() => {
     intro.style.display = "none";
     container.style.display = "flex";
+    document.body.style.overflowY = "auto"; // Habilita la barra solo después de la intro
 }, 10000);
 
-// Obtener la fecha de desbloqueo diaria a las 22:00
 function getUnlockStartDate() {
     const now = new Date();
     const start = new Date();
@@ -23,15 +24,12 @@ function getUnlockStartDate() {
 }
 const unlockStart = getUnlockStartDate();
 
-// ACTUALIZA CONTADOR Y DESBLOQUEO
-function updateCountdownAndUnlock() {
+function updateLogic() {
     const now = Date.now();
     const diff = targetDate - now;
 
-    // Contador
-    if(diff <= 0){
+    if(diff <= 0) {
         countdown.innerHTML = "💖 ES HOY 💖";
-        timerText.textContent = "";
     } else {
         const d = Math.floor(diff / 86400000);
         const h = Math.floor(diff / 3600000 % 24);
@@ -39,19 +37,16 @@ function updateCountdownAndUnlock() {
         const s = Math.floor(diff / 1000 % 60);
         countdown.innerHTML = `${d}D ${h}H ${m}M ${s}S`;
     }
-    
-    // Canciones desbloqueadas según días pasados
+
+    // CAMBIA EL 1 POR 10 PARA PRUEBA INMEDIATA
     const daysPassed = Math.floor((now - unlockStart) / 86400000) + 1;
+
     tracks.forEach(track => {
         const day = parseInt(track.dataset.day);
-        if(daysPassed >= day) {
-            track.classList.remove("locked");
-        } else {
-            track.classList.add("locked");
-        }
+        if(daysPassed >= day) track.classList.remove("locked");
+        else track.classList.add("locked");
     });
-
-    // Temporizador próxima canción
+        // Temporizador próxima canción
     const nextLocked = Array.from(tracks).find(track => track.classList.contains("locked"));
     if(nextLocked){
         const day = parseInt(nextLocked.dataset.day);
@@ -64,11 +59,19 @@ function updateCountdownAndUnlock() {
     } else {
         timerText.textContent = "Todas las canciones desbloqueadas 🎵";
     }
-}
-setInterval(updateCountdownAndUnlock, 1000);
-updateCountdownAndUnlock();
 
-// PLAYER FUNCIONAL
+    // Mostrar flecha y pregunta final
+    if(daysPassed >= 5 && intro.style.display === "none") {
+        questionScreen.style.display = "flex";
+        scrollArrow.style.display = "flex";
+    } else {
+        questionScreen.style.display = "none";
+        scrollArrow.style.display = "none";
+    }
+}
+setInterval(updateLogic, 1000);
+
+// REPRODUCTOR
 let currentAudio = null;
 tracks.forEach(track => {
     const btn = track.querySelector(".play-btn");
@@ -76,79 +79,86 @@ tracks.forEach(track => {
     const bar = track.querySelector(".progress-bar");
 
     btn.addEventListener("click", () => {
-        if(track.classList.contains("locked")) return;
-
-        if(currentAudio && currentAudio !== audio){
+        if(currentAudio && currentAudio !== audio) {
             currentAudio.pause();
             document.querySelectorAll(".play-btn").forEach(b => b.textContent = "▶");
         }
-
-        if(audio.paused){
-            audio.play();
-            btn.textContent = "⏸";
-            currentAudio = audio;
+        if(audio.paused) {
+            audio.play(); btn.textContent = "⏸"; currentAudio = audio;
         } else {
-            audio.pause();
-            btn.textContent = "▶";
+            audio.pause(); btn.textContent = "▶";
         }
     });
 
     audio.addEventListener("timeupdate", () => {
-        if(!isNaN(audio.duration)) bar.style.width = (audio.currentTime / audio.duration)*100 + "%";
-    });
-
-    audio.addEventListener("ended", () => {
-        btn.textContent = "▶";
-        bar.style.width = "0%";
+        bar.style.width = (audio.currentTime / audio.duration) * 100 + "%";
     });
 });
 
+// BOTONES Y FUEGOS
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const finalScreen = document.getElementById("finalScreen");
+const finalMsg = document.getElementById("finalMsg");
 
-// Seleccionamos el botón
-const loveBtn = document.getElementById("loveBtn");
+const escapar = () => {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 60);
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+};
 
-// Cuando se reproduzca la última canción (día 5)
-const lastTrack = document.querySelector('.track[data-day="5"] audio');
+noBtn.addEventListener("mouseover", escapar);
+noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); escapar(); });
 
-lastTrack.addEventListener('play', () => {
-    // Mostrar el corazón con animación
-    loveBtn.style.transform = "rotate(-45deg) scale(1)";
-    loveBtn.style.opacity = "1";
+yesBtn.addEventListener("click", () => {
+    finalScreen.style.display = "flex";
+    finalMsg.innerHTML = "TE QUIEROOO HERMOSA, <br> GRACIAS POR DARME EL PRIVILEGIO <br> DE ESTAR CONTIGO! 💖";
+    lanzarFuegos();
 });
 
-// Click en el corazón → abrir pregunta
-loveBtn.addEventListener('click', () => {
-    document.body.innerHTML = `
-        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;color:white;font-family:sans-serif;text-align:center;">
-            <h1>¿QUIERES SER MI NOVIA?</h1>
-            <div style="margin-top:20px;">
-                <button id="yesBtn" style="padding:10px 20px;margin-right:20px;font-size:1rem;cursor:pointer;">SI</button>
-                <button id="noBtn" style="padding:10px 20px;font-size:1rem;cursor:pointer;position:relative;">NO</button>
-            </div>
-        </div>
-    `;
-
-    const noBtn = document.getElementById("noBtn");
-
-    // Botón NO que se mueve
-    noBtn.addEventListener('mousemove', () => {
-        const x = Math.random() * 200 - 100; // mueve aleatorio
-        const y = Math.random() * 100 - 50;
-        noBtn.style.transform = `translate(${x}px, ${y}px)`;
-    });
-
-    // Botón SI → mensaje final
-    document.getElementById("yesBtn").addEventListener('click', () => {
-        document.body.innerHTML = `
-            <div style="display:flex;justify-content:center;align-items:center;height:100vh;color:white;font-family:sans-serif;text-align:center;">
-                <h1>💖 GG!! Ahora el que te mire lo fusilo 💖</h1>
-            </div>
-        `;
-    });
+// Flecha con scroll suave
+scrollArrow.addEventListener('click', () => {
+    questionScreen.scrollIntoView({ behavior: 'smooth' });
 });
 
+function lanzarFuegos() {
+    const canvas = document.getElementById("fireworksCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    let particles = [];
 
+    class Particle {
+        constructor(x, y, color) {
+            this.x = x; this.y = y; this.color = color;
+            this.velocity = { x: (Math.random() - 0.5) * 8, y: (Math.random() - 0.5) * 8 };
+            this.alpha = 1;
+        }
+        update() {
+            this.velocity.y += 0.05; this.x += this.velocity.x; this.y += this.velocity.y;
+            this.alpha -= 0.01;
+        }
+        draw() {
+            ctx.save(); ctx.globalAlpha = this.alpha;
+            ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI*2);
+            ctx.fillStyle = this.color; ctx.fill(); ctx.restore();
+        }
+    }
 
-
-
-
+    function anim() {
+        requestAnimationFrame(anim);
+        ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(0,0,canvas.width, canvas.height);
+        if(Math.random() < 0.1) {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height / 2;
+            const color = `hsl(${Math.random()*360}, 100%, 50%)`;
+            for(let i=0; i<30; i++) particles.push(new Particle(x, y, color));
+        }
+        particles.forEach((p, i) => {
+            if(p.alpha <= 0) particles.splice(i, 1);
+            else { p.update(); p.draw(); }
+        });
+    }
+    anim();
+}

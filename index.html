@@ -8,18 +8,16 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    height: 100vh;
+    min-height: 100vh;
     width: 100vw;
-    overflow: hidden;
+    overflow: hidden; /* Oculta barra de scroll al inicio */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     display: flex;
-    justify-content: center;
-    align-items: center;
     flex-direction: column;
+    align-items: center;
     background: linear-gradient(120deg, #ff9a9e, #fad0c4, #ffb6c1);
     background-size: 400% 400%;
     animation: bgMove 20s ease infinite alternate;
-    position: relative;
 }
 
 @keyframes bgMove {
@@ -27,312 +25,235 @@ body {
     100% { background-position: 100% 50%; }
 }
 
-/* INTRO */
 #intro {
-    font-size: clamp(3rem, 10vw, 5rem);
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(120deg, #ff9a9e, #fad0c4, #ffb6c1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(2rem, 10vw, 5rem);
     color: white;
     text-align: center;
-    animation: heartbeat 1s infinite;
-    z-index: 3;
-    text-shadow: 0 0 40px #fff;
+    z-index: 9999;
 }
+
+#intro span { animation: heartbeat 1s infinite; }
 
 @keyframes heartbeat {
-    0%, 100% { transform: scale(1); text-shadow: 0 0 30px #fff; }
-    50% { transform: scale(1.1); text-shadow: 0 0 60px #ff5fa2; }
+    0%, 100% { transform: scale(1); text-shadow: 0 0 20px #fff; }
+    50% { transform: scale(1.1); text-shadow: 0 0 40px #ff5fa2; }
 }
 
-/* CONTADOR */
 #countdown-container {
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white;
-    z-index: 3;
-    padding: 20px;
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
+    padding: 40px 20px;
+    z-index: 3;
 }
 
 #countdown {
     font-size: clamp(3rem, 15vw, 6rem);
     font-weight: 800;
-    margin-bottom: 20px;
-    text-shadow: 0 0 40px #ff5fa2;
-    text-align: center;
+    text-shadow: 0 0 30px #ff5fa2;
+    margin-bottom: 10px;
 }
 
-#timerText {
-    font-size: clamp(1rem, 3vw, 1.5rem);
-    margin-bottom: 20px;
-    text-align: center;
-}
+#timerText { margin-bottom: 30px; font-weight: 300; }
 
-/* PLAYER */
 #music {
     width: 360px;
     max-width: 90vw;
     padding: 20px;
     border-radius: 28px;
-    background: rgba(255,255,255,0.28);
-    backdrop-filter: blur(14px);
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 15px;
 }
 
 .track {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    padding: 10px;
-    border-radius: 20px;
+    padding: 15px;
+    border-radius: 15px;
     background: rgba(255,255,255,0.1);
-    transition: all 0.3s;
-    width: 100%;
-}
-
-.track.locked {
-    opacity: 0.35;
-    filter: blur(1px);
-    pointer-events: none;
-}
-
-.track-info {
-    width: 100%;
+    transition: 0.3s;
     text-align: center;
-    color: white;
-    margin-bottom: 6px;
 }
 
-.track-info h2 {
-    font-size: clamp(1rem, 3vw, 1.3rem);
-}
-
-.track-info p {
-    font-size: clamp(0.8rem, 2vw, 1rem);
-}
+.track.locked { opacity: 0.3; filter: blur(2px); pointer-events: none; }
 
 .play-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background: white;
-    color: #ff5fa2;
-    font-size: 1.5rem;
-    cursor: pointer;
-    margin-bottom: 6px;
-    transition: all 0.2s;
-}
-.play-btn:hover { transform: scale(1.1); }
-
-.progress {
-    width: 100%;
-    height: 6px;
-    background: rgba(255,255,255,0.4);
-    border-radius: 5px;
-    overflow: hidden;
+    width: 45px; height: 45px;
+    border-radius: 50%; border: none;
+    background: white; color: #ff5fa2;
+    font-size: 1.2rem; cursor: pointer;
+    margin-bottom: 10px;
 }
 
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ff5fa2, #ffb6c1);
-    transition: width 0.2s;
-}
+.progress { width: 100%; height: 5px; background: rgba(255,255,255,0.3); border-radius: 5px; margin-top: 10px; overflow: hidden; }
+.progress-bar { height: 100%; width: 0%; background: #ff5fa2; transition: width 0.1s; }
 
-/* CORAZONES */
-.heart {
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background: red;
-    transform: rotate(45deg);
-    animation: float 6s linear infinite;
-    opacity: 0.8;
-    border-radius: 50%;
-}
-
-.heart::before,
-.heart::after {
-    content: "";
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    background: red;
-    border-radius: 50%;
-}
-
-.heart::before { top: -7.5px; }
-.heart::after { left: -7.5px; }
-
-@keyframes float {
-    0% { transform: translateY(100vh) rotate(45deg); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(-10vh) rotate(45deg); opacity: 0; }
-}
-
-/* BOTÓN CORAZÓN PREGUNTA */
-#loveBtn {
-    position: fixed;
-    bottom: 20%;
-    right: 10%;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: #ff5fa2;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
+/* ESTILO DE LA FLECHA */
+#scrollArrow {
     display: none;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    margin-top: 10px;
+    color: white;
+    animation: bounce 2s infinite;
     cursor: pointer;
-    text-align: center;
-    z-index: 10;
-    box-shadow: 0 0 20px #fff;
-    transition: all 0.5s ease;
 }
 
-/* PANTALLA PREGUNTA */
-#questionScreen, #finalScreen {
-    position: fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background: rgba(0,0,0,0.9);
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
+}
+
+#questionScreen {
     display: none;
+    min-height: 100vh;
+    width: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;
-    z-index: 20;
+    padding: 20px;
+    position: relative;
 }
 
-#questionScreen h1, #finalScreen h1 {
-    font-size: clamp(2rem, 8vw, 4rem);
-    margin-bottom: 30px;
+#questionScreen h1 { font-size: clamp(2rem, 8vw, 3.5rem); margin-bottom: 40px; text-align: center; }
+
+.btn-wrap { display: flex; gap: 20px; height: 80px; align-items: center; justify-content: center; width: 100%; position: relative; }
+
+#yesBtn, #noBtn {
+    padding: 15px 35px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+#yesBtn { background: #ff5fa2; color: white; z-index: 10; }
+#noBtn { background: white; color: #ff5fa2; position: absolute; z-index: 10; }
+
+#finalScreen {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
     text-align: center;
 }
 
-#questionScreen button {
-    width: 120px;
-    height: 50px;
-    margin: 10px;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+#finalMsg { color: white; font-size: 1.8rem; padding: 20px; z-index: 10001; }
 
-#yesBtn { background: #ff5fa2; color: white; }
-#noBtn { background: white; color: #ff5fa2; position: relative; }
+#fireworksCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+.heart {
+    position: absolute;
+    width: 15px; height: 15px;
+    background: #ff5fa2;
+    transform: rotate(45deg);
+    animation: float 6s linear infinite;
+    opacity: 0.6;
+}
+.heart::before, .heart::after { content: ""; position: absolute; width: 15px; height: 15px; background: inherit; border-radius: 50%; }
+.heart::before { top: -8px; left: 0; }
+.heart::after { left: -8px; top: 0; }
+
+@keyframes float {
+    0% { transform: translateY(110vh) rotate(45deg); opacity: 0; }
+    50% { opacity: 0.8; }
+    100% { transform: translateY(-10vh) rotate(45deg); opacity: 0; }
+}
 </style>
 </head>
 <body>
 
-<div id="intro">💖 BIENVENIDA MI AMOR 💖</div>
+<div id="intro"><span>💖 BIENVENIDA MI AMOR 💖</span></div>
 
 <div id="countdown-container">
     <div id="countdown"></div>
     <p id="timerText"></p>
-
     <div id="music">
         <div class="track" data-day="0">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 1 💕</h2>
-                <p>MIS DIAS</p>
-            </div>
+            <h2>DIA 1 💕</h2><p>MIS DIAS</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia1.mp3"></audio>
         </div>
         <div class="track" data-day="1">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 2 💖</h2>
-                <p>SON MAS BONITOS</p>
-            </div>
+            <h2>DIA 2 💖</h2><p>SON MAS BONITOS</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia2.mp3"></audio>
         </div>
         <div class="track" data-day="2">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 3 💘</h2>
-                <p>PORQUE TU</p>
-            </div>
+            <h2>DIA 3 💘</h2><p>PORQUE TU</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia3.mp3"></audio>
         </div>
         <div class="track" data-day="3">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 4 💞</h2>
-                <p>ESTAS</p>
-            </div>
+            <h2>DIA 4 💞</h2><p>ESTAS</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia4.mp3"></audio>
         </div>
         <div class="track" data-day="4">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 5 💓</h2>
-                <p>SIEMPRE</p>
-            </div>
+            <h2>DIA 5 💓</h2><p>SIEMPRE</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia5.mp3"></audio>
         </div>
         <div class="track" data-day="5">
             <button class="play-btn">▶</button>
-            <div class="track-info">
-                <h2>DIA 6 💍</h2>
-                <p>EN ELLOS</p>
-            </div>
+            <h2>DIA 6 💍</h2><p>EN ELLOS</p>
             <div class="progress"><div class="progress-bar"></div></div>
             <audio src="musica/dia6.mp3"></audio>
+        </div>
+
+        <div id="scrollArrow">
+            <p style="font-size: 0.8rem;">BAJA PARA TU SORPRESA</p>
+            <span>↓</span>
         </div>
     </div>
 </div>
 
-<!-- BOTÓN CORAZÓN -->
-<div id="loveBtn">PULSA ACA</div>
-
-<!-- PANTALLA PREGUNTA -->
 <div id="questionScreen">
-    <h1>💖¿QUIERES SER MI NOVIA?💖</h1>
-    <div>
+    <h1>💖 ¿QUIERES SER MI NOVIA? 💖</h1>
+    <div class="btn-wrap">
         <button id="yesBtn">SI</button>
         <button id="noBtn">NO</button>
     </div>
 </div>
 
-<!-- PANTALLA FINAL -->
 <div id="finalScreen">
-    <h1>💖 GG!! Ahora el que te mire lo fusilo 💖</h1>
+    <canvas id="fireworksCanvas"></canvas>
+    <h1 id="finalMsg"></h1>
 </div>
 
 <script src="app.js"></script>
-
 <script>
-/* CORAZONES ALEATORIOS Y VARIADOS */
-setInterval(()=>{
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.style.left = Math.random()*100 + "vw";
-    const size = 10 + Math.random()*15;
-    h.style.width = size + "px";
-    h.style.height = size + "px";
-    h.style.background = ["#ff5fa2","#ffb6c1","#ff8fb3","#ff69b4"][Math.floor(Math.random()*4)];
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(), 6000 + Math.random()*2000);
-}, 250);
+    setInterval(() => {
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.style.left = Math.random() * 100 + "vw";
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 7000);
+    }, 350);
 </script>
-
 </body>
 </html>

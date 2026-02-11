@@ -48,7 +48,7 @@ function updateCountdownAndUnlock() {
             track.classList.remove("locked");
         } else {
             track.classList.add("locked");
-        
+        }
     });
 
     // Temporizador próxima canción
@@ -146,6 +146,7 @@ loveBtn.addEventListener('click', () => {
         `;
     });
 });
+
 
 
 

@@ -39,21 +39,6 @@ function updateCountdownAndUnlock() {
         const s = Math.floor(diff / 1000 % 60);
         countdown.innerHTML = `${d}D ${h}H ${m}M ${s}S`;
     }
-    // -------- DESBLOQUEO DE CANCIONES --------
-    let daysPassed = 0;
-
-    if(now > unlockStart){
-        daysPassed = Math.floor((now - unlockStart) / 86400000);
-    }
-
-    tracks.forEach(track => {
-        const day = parseInt(track.dataset.day);
-
-        // Una vez desbloqueada, NO se vuelve a bloquear
-        if(daysPassed >= day){
-            track.classList.remove("locked");
-        }
-    });
     
     // Canciones desbloqueadas según días pasados
     const daysPassed = Math.floor((now - unlockStart) / 86400000);
@@ -158,5 +143,6 @@ loveBtn.addEventListener('click', () => {
         `;
     });
 });
+
 
 

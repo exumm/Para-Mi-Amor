@@ -41,7 +41,7 @@ function updateCountdownAndUnlock() {
     }
     
     // Canciones desbloqueadas según días pasados
-    const daysPassed = Math.floor((now - unlockStart) / 86400000);
+    const daysPassed = Math.floor((now - unlockStart) / 86400000) + 1;
     tracks.forEach(track => {
         const day = parseInt(track.dataset.day);
         if(daysPassed >= day) track.classList.remove("locked");
@@ -143,6 +143,7 @@ loveBtn.addEventListener('click', () => {
         `;
     });
 });
+
 
 
 

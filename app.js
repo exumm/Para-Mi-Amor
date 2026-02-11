@@ -44,8 +44,11 @@ function updateCountdownAndUnlock() {
     const daysPassed = Math.floor((now - unlockStart) / 86400000) + 1;
     tracks.forEach(track => {
         const day = parseInt(track.dataset.day);
-        if(daysPassed >= day) track.classList.remove("locked");
-        else track.classList.add("locked");
+        if(daysPassed >= day) {
+            track.classList.remove("locked");
+        } else {
+            track.classList.add("locked");
+        
     });
 
     // Temporizador próxima canción
@@ -143,6 +146,7 @@ loveBtn.addEventListener('click', () => {
         `;
     });
 });
+
 
 
 

@@ -113,7 +113,7 @@ noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); escapar(); });
 
 yesBtn.addEventListener("click", () => {
     finalScreen.style.display = "flex";
-    finalMsg.innerHTML = "TE QUIEROOO HERMOSA, <br> GRACIAS POR DARME EL PRIVILEGIO <br> DE ESTAR CONTIGO! 💖";
+    finalMsg.innerHTML = "TE AMO HERMOSA <br> GRACIAS POR DARME EL PRIVILEGIO <br> DE ESTAR CONTIGO! 💖";
     lanzarFuegos();
 });
 
@@ -162,3 +162,4 @@ function lanzarFuegos() {
     }
     anim();
 }
+

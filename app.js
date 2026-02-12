@@ -12,22 +12,17 @@ const targetDate = new Date("February 14, 2026 22:00:00").getTime();
 setTimeout(() => {
     intro.style.display = "none";
     container.style.display = "flex";
-    document.body.style.overflowY = "auto"; // Habilita la barra solo después de la intro
+    document.body.style.overflowY = "auto"; 
 }, 10000);
 
-function getUnlockStartDate() {
-    const now = new Date();
-    const start = new Date();
-    start.setHours(22,0,0,0);
-    if(now < start) start.setDate(start.getDate() - 1);
-    return start.getTime();
-}
-const unlockStart = getUnlockStartDate();
+// FECHA DE INICIO FIJA: Lunes 9 de Febrero a las 10:00 PM (Hora RD)
+const unlockStart = new Date("February 9, 2026 22:00:00").getTime();
 
 function updateLogic() {
     const now = Date.now();
     const diff = targetDate - now;
 
+    // Actualización del contador principal (San Valentín)
     if(diff <= 0) {
         countdown.innerHTML = "💖 ES HOY 💖";
     } else {
@@ -38,30 +33,37 @@ function updateLogic() {
         countdown.innerHTML = `${d}D ${h}H ${m}M ${s}S`;
     }
 
-    // CAMBIA EL 1 POR 10 PARA PRUEBA INMEDIATA
-    const daysPassed = Math.floor((now - unlockStart) / 86400000) + 1;
-
+    // LÓGICA DE DESBLOQUEO FIJA (No se vuelve a bloquear)
     tracks.forEach(track => {
-        const day = parseInt(track.dataset.day);
-        if(daysPassed >= day) track.classList.remove("locked");
-        else track.classList.add("locked");
+        const dayIndex = parseInt(track.dataset.day);
+        // Cada canción suma 24 horas exactas (86400000ms) desde la fecha de inicio
+        const unlockTime = unlockStart + (dayIndex * 86400000);
+        
+        if(now >= unlockTime) {
+            track.classList.remove("locked");
+        } else {
+            track.classList.add("locked");
+        }
     });
-        // Temporizador próxima canción
+
+    // Temporizador para la siguiente canción
     const nextLocked = Array.from(tracks).find(track => track.classList.contains("locked"));
     if(nextLocked){
-        const day = parseInt(nextLocked.dataset.day);
-        const unlockTime = unlockStart + day * 86400000;
+        const dayIndex = parseInt(nextLocked.dataset.day);
+        const unlockTime = unlockStart + (dayIndex * 86400000);
         const remaining = unlockTime - now;
-        const hours = Math.floor((remaining % (1000*60*60*24)) / (1000*60*60));
-        const minutes = Math.floor((remaining % (1000*60*60)) / (1000*60));
-        const seconds = Math.floor((remaining % (1000*60)) / 1000);
+        
+        const hours = Math.floor(remaining / 3600000);
+        const minutes = Math.floor((remaining % 3600000) / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
         timerText.textContent = `Siguiente canción desbloquea en: ${hours}h ${minutes}m ${seconds}s`;
     } else {
         timerText.textContent = "Todas las canciones desbloqueadas 🎵";
     }
 
-    // Mostrar flecha y pregunta final
-    if(daysPassed >= 5 && intro.style.display === "none") {
+    // Mostrar pregunta final solo cuando la ÚLTIMA canción (Día 6) se desbloquee
+    const lastTrack = tracks[tracks.length - 1];
+    if(lastTrack && !lastTrack.classList.contains("locked") && intro.style.display === "none") {
         questionScreen.style.display = "flex";
         scrollArrow.style.display = "flex";
     } else {
@@ -71,7 +73,7 @@ function updateLogic() {
 }
 setInterval(updateLogic, 1000);
 
-// REPRODUCTOR
+// REPRODUCTOR (Se mantiene igual)
 let currentAudio = null;
 tracks.forEach(track => {
     const btn = track.querySelector(".play-btn");
@@ -95,7 +97,7 @@ tracks.forEach(track => {
     });
 });
 
-// BOTONES Y FUEGOS
+// BOTONES Y FUEGOS (Se mantiene igual)
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const finalScreen = document.getElementById("finalScreen");
@@ -117,7 +119,6 @@ yesBtn.addEventListener("click", () => {
     lanzarFuegos();
 });
 
-// Flecha con scroll suave
 scrollArrow.addEventListener('click', () => {
     questionScreen.scrollIntoView({ behavior: 'smooth' });
 });
@@ -162,4 +163,3 @@ function lanzarFuegos() {
     }
     anim();
 }
-

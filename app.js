@@ -16,7 +16,7 @@ setTimeout(() => {
 }, 10000);
 
 // FECHA DE INICIO FIJA: Lunes 9 de Febrero a las 10:00 PM (Hora RD)
-const unlockStart = new Date("February 9, 2026 22:00:00").getTime();
+const unlockStart = new Date("February 9, 2026 20:00:00").getTime();
 
 function updateLogic() {
     const now = Date.now();
@@ -163,3 +163,4 @@ function lanzarFuegos() {
     }
     anim();
 }
+

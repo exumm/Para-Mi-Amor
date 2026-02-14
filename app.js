@@ -6,7 +6,7 @@ const tracks = document.querySelectorAll(".track");
 const questionScreen = document.getElementById("questionScreen");
 const scrollArrow = document.getElementById("scrollArrow");
 
-const targetDate = new Date("February 14, 2026 22:00:00").getTime();
+const targetDate = new Date("February 14, 2026 10:00:00").getTime();
 
 // INTRO -> HABILITAR SCROLL AL TERMINAR
 setTimeout(() => {
@@ -163,4 +163,5 @@ function lanzarFuegos() {
     }
     anim();
 }
+
 
